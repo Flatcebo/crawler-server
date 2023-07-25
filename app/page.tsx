@@ -1,113 +1,316 @@
-import Image from 'next/image'
+"use client";
+
+// import useSWR from "swr";
+// import useMutation from "@/client/useMutation";
+import ExcelDownload from "@/components/ExcelDownload";
+import useMutation from "@/lib/client/useMutation";
+
+import Link from "next/link";
+import React, { useEffect, useState } from "react";
+import { CSVLink } from "react-csv";
+import { useForm } from "react-hook-form";
+import { mutate } from "swr";
+
+type ExcelDataType = {
+  listSubject: String;
+  listName: String;
+  listDate: Date;
+  listTitle: String;
+  listUserId: String;
+};
 
 export default function Home() {
+  const [sendedURI, setSendedURI] = useState(false);
+  const [detailON, setDetailOn] = useState<any>(false);
+  // const fetcher = (URI: any) => axios.get(URI).then(res => res.data);
+  const [detailBtnON, setDetailBtnOn] = useState<any>(true);
+
+  const headers = [
+    {
+      label: "게시일",
+      key: "uploadDate",
+    },
+    {
+      label: "제목",
+      key: "title",
+    },
+    {
+      label: "이름",
+      key: "name",
+    },
+    {
+      label: "지역",
+      key: "country",
+    },
+    { label: "주소", key: "url" },
+    {
+      label: "전화번호",
+      key: "phoneNumber",
+    },
+    {
+      label: "유저 아이디",
+      key: "userId",
+    },
+    {
+      label: "이미지 파일",
+      key: "imageUrl",
+    },
+    {
+      label: "글 번호",
+      key: "listNumber",
+    },
+  ];
+  const { register, handleSubmit } = useForm<any>({
+    defaultValues: { uri: "" },
+  });
+
+  const [createCrawling, { loading, data, error }] = useMutation(`/api`);
+
+  // const { data: data1 } = useSWR(`/api/crawler`);
+  // const [createCrawling1, { loading: loading1, data: data1, error: error1 }] =
+  //   useMutations(`/api/crawler`);
+
+  const onSubmits = (data: any) => {
+    createCrawling(data);
+  };
+
+  const onclickBtn = (e: React.MouseEvent<HTMLButtonElement>) => {
+    setDetailBtnOn(false);
+    setSendedURI(any => !any);
+    // onClickAllContents(e);
+  };
+
+  const [uri, setUri] = useState("");
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUri(e.target.value);
+  };
+  // const a = async (addr: string) => {
+  //   return await fetch(`/api/crawler?addr=${encodeURIComponent(addr)}`).then(
+  //     res => res.json()
+  //   );
+
+  // };
+
+  const [etc, setEtc] = useState([]);
+  const onClickAllContents = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    setDetailOn(false);
+    const addrs = data.items.map((value: any) => value.listSubject);
+
+    // console.log(addrs);
+    const list: any = [];
+    for (const it of addrs) {
+      const result = await fetch(`/api?addr=${encodeURIComponent(it)}`)
+        .then(res => res.json())
+        .then(res => (res as any).detailItems)
+        .catch(error => console.log("error => ", error));
+      // console.log(result);
+
+      list.push(result);
+    }
+    setEtc(list);
+    // console.log("setEtc =>", list);
+    alert("상세 데이터 조회 완료");
+    console.log("---------------끝----------------");
+  };
+
+  function convertAToB(from: any, from2: any, from3: any) {
+    if (from == null || from2 == null || from3 == null) {
+      // alert("널임 확인 좀");
+      return [];
+    }
+
+    // console.log("from =>", from);
+    // console.log("from 2 =>", from2);
+    // console.log("from 3 =>", from3);
+    return (from as any).items.map((value: any, i: any) => ({
+      uploadDate: value.listDate.replace("", "`"),
+      name: value.listName ?? "---이름을 표기할 수 없습니다---",
+      url: value.listSubject,
+      listNumber: value.listSubject.replace(
+        "https://innak.kr/bbs/board.php?bo_table=",
+        ""
+      ),
+      title: (value.listTitle as any) ?? "",
+      userId: value.listUserId,
+      phoneNumber: (from2[i]?.results as Array<string>)?.join(", ") ?? "",
+    }));
+  }
+
+  // console.log(
+  //   "asdfas ===>",
+  //   etc.map(value => {
+  //     return (value as any).results;
+  //   })
+  // );
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
+    <div className="relative">
+      {detailBtnON ? (
+        <div className="flex">
+          <form onSubmit={handleSubmit(onSubmits)}>
+            <input
+              defaultValue="uri"
+              {...register("uri")}
+              type="url"
+              value={uri}
+              onChange={handleChange}
+              className=" w-[1250px] h-[100px] bg-[#0000ff67]"
             />
-          </a>
+            <button
+              type="submit"
+              className="w-[126px] h-[100px] bg-[#00800067]"
+              onClick={onclickBtn}
+              onSubmit={handleSubmit(onSubmits)}
+            >
+              <strong>검색</strong>
+            </button>
+          </form>
+        </div>
+      ) : (
+        <div className="flex">
+          <form onSubmit={handleSubmit(onSubmits)}>
+            <input
+              defaultValue="uri"
+              {...register("uri")}
+              type="url"
+              value={uri}
+              onChange={handleChange}
+              className=" w-[1250px] h-[100px] bg-[#0000ff67]"
+            />
+            <button
+              type="submit"
+              className="w-[126px] h-[100px] bg-[#00800067]"
+              onClick={onclickBtn}
+              onSubmit={handleSubmit(onSubmits)}
+            >
+              <strong>검색</strong>
+            </button>
+          </form>
+
+          <button
+            className="bg-[#ffff007d] w-[200px] h-[100px]"
+            onClick={onClickAllContents}
+          >
+            <strong>상세 데이터 조회</strong>
+          </button>
+          <ExcelDownload
+            className="bg-[#ff006f7d] w-[200px] h-[100px]"
+            data={convertAToB(data, etc, data)}
+            // onClick= {}
+            // data={convertBToC(datas)}
+            headers={headers}
+          />
+          {/* <CSVLink
+            className="bg-[#ffff007d] w-[200px] h-[100px]"
+            data={datas}
+            headers={headers}
+          >
+            EXCEL DONWLOAD
+          </CSVLink> */}
+        </div>
+      )}
+
+      {/* <table>
+        <tbody>
+          <tr>hh</tr>
+          <tr>hh</tr>
+          <tr>hh</tr>
+          <tr>hh</tr>
+        </tbody>
+      </table> */}
+      <div className="relative">
+        <div className="relative flex flex-row">
+          {/* 지역 카테고리 */}
+          <div className="bg-[#9f84845a]">
+            {data &&
+              data.cate.map((cont: any) => {
+                return (
+                  <div className="outline">
+                    <h2 className="underline text-[#9a9a9a9]">
+                      <Link
+                        href={cont.countryNav.replace(
+                          ".",
+                          "https://innak.kr/bbs"
+                        )}
+                      >
+                        <button>{cont.countryName}</button>
+                      </Link>
+                    </h2>
+                  </div>
+                );
+              })}
+          </div>
+          {/* 리스트 */}
+          <div className="bg-[#67677e39]">
+            {data &&
+              data.items.map((cont: any, i: number) => {
+                return (
+                  <div className="outline">
+                    <h1 className="underline text-[#9a9a9a9]">
+                      {cont.listName}
+                      {cont.listUserId}
+                    </h1>
+
+                    {detailON ? (
+                      <div>
+                        <button>
+                          <h2>{cont.listSubject}</h2>
+                          <div></div>
+                        </button>
+                      </div>
+                    ) : (
+                      <>
+                        <button
+                          onClick={() => {
+                            setDetailOn(true);
+                            return (
+                              <div className="bg-[red]">
+                                <h1>hihi</h1>
+                              </div>
+                            );
+                          }}
+                        >
+                          <h2>{cont.listSubject}</h2>
+                        </button>
+                      </>
+                    )}
+                    <h4>{cont.listDate}</h4>
+                  </div>
+                );
+              })}
+          </div>
+        </div>
+        <div className="relative">
+          {etc.map(value => {
+            return (
+              <div className="overflow-y-scroll border-t-[50px] border-[#0000ff56] ">
+                <div className="">
+                  {/* <div className=" m-[10px] ">{(value as any).detailDesc}</div> */}
+                  {/* <div className=" m-[10px] ">{(value as any).results}</div> */}
+                  {/* <div className=" m-[10px] ">{(value as any).detailImg}</div> */}
+                  {/* <div>
+                    {(value as any).detailImg.map((img: any) => {
+                      return (
+                        <div className="outline outline-[red]">
+                          <Link
+                            href={""}
+                            onClick={() => {
+                              window.open(img);
+                            }}
+                          >
+                            {img}
+                          </Link>
+                        </div>
+                      );
+                    })}
+                  </div> */}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore the Next.js 13 playground.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+    </div>
+  );
 }
