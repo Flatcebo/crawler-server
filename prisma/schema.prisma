@@ -13,6 +13,7 @@ model Categories {
 
 model Description {
   id          Int      @id @default(autoincrement())
+  userId      String?
   title       String?
   userName    String?
   country     String?
