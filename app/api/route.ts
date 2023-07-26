@@ -22,7 +22,9 @@ export async function POST(req: Request, res: Response) {
     // }
     // const json = JSON.stringify(addr);
 
-    const $ = cheerio.load(await await fetch(addr).then((res: any) => res));
+    const $ = cheerio.load(
+      await (await fetch(addr).then((res: any) => res)).text()
+    );
 
     console.log("addr =====>", addr);
 
@@ -32,14 +34,17 @@ export async function POST(req: Request, res: Response) {
     const detailDesc: any = $(".view-content");
 
     const detailItems = {
-      detailDesc: console.log((detailDesc as any).text().trim() ?? ""),
+      detailDesc: (detailDesc as any).text().trim() ?? "",
       detailPhoneNumber:
         (detailDesc as any).text().trim().replace(/\D/g, "|") ?? "",
-      detailImg: [...new Array(detailImg.length)].map((_, i) => {
-        // console.log((detailImg as any)[i].attribs.src);
-        return (detailImg as any)[i].attribs.src;
-      }),
+      detailImg:
+        [...new Array(detailImg.length)].map((_, i) => {
+          console.log((detailImg as any)[i].attribs.src);
+          return (detailImg as any)[i].attribs.src;
+        }) ?? "",
     };
+
+    // console.log(detailItems);
 
     const regex: any =
       /(?=.)(?:02|0[13-9]{1}[0-9]{1})[^0-9]*[0-9]{3,4}[^0-9]*[0-9]{4}/g;
@@ -56,6 +61,13 @@ export async function POST(req: Request, res: Response) {
     return detailItems;
   };
   //----------------------------------------------------------------------------------------
+
+  //   0페이지와 1페이지는 같음
+  //   &page=2
+  // map((_: any,i: any) => {
+
+  // })
+
   const uri = (await req.json()).uri;
 
   console.log("uri ===>", uri);
@@ -112,9 +124,7 @@ export async function POST(req: Request, res: Response) {
       // akak: console.log(
       //   await detail((listSubject as any)[i]?.attribs.href ?? "")
       // ),
-      addr: console.log(
-        await detail((listSubject as any)[i]?.attribs.href ?? "")
-      ),
+      addr: (await detail((listSubject as any)[i]?.attribs.href)) ?? "",
       // phoneNumbers: console.log((listSubject as any)[i]?.attribs.href),
       listTitle: (listTitle as any)[i]?.next.data.trim() ?? "",
       listSubject: (listSubject as any)[i]?.attribs.href ?? "",
@@ -140,15 +150,20 @@ export async function POST(req: Request, res: Response) {
 
   // console.log((listUserId as any)[0].attribs.onclick);
 
-  // ----------------------------------------- addr에서 아무런 데이터 받아오지 못해서 phoneNumber은 none 출력-----------------
+  // const regex: any =
+  //   /(?=.)(?:02|0[13-9]{1}[0-9]{1})[^0-9]*[0-9]{3,4}[^0-9]*[0-9]{4}/g;
+
+  // let result: any = regex.exec(detailItems.detailDesc);
   const user = await prisma.description.createMany({
     data: items.map((value: any) => ({
       title: value.listTitle,
       userName: value.listName,
       userId: value.listUserId,
-      // uploadDate: (listDate as any)[0].children[0].data.trim(),
-      // imageURL: (listSubject as any).attribs.href,
-      phoneNumber: value.addr ?? "none",
+      uploadDate: value.listDate,
+      imageURL: value.addr.detailImg.join(", "),
+      mainNumber: value.addr.results[0],
+      phoneNumber: value.addr.results.join(", ").replace(/\D/g, ","),
+      desc: value.addr.detailDesc,
       country: undefined,
       fish: undefined,
       tag: undefined,

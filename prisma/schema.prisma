@@ -16,14 +16,15 @@ model Description {
   userId      String?
   title       String?
   userName    String?
+  mainNumber  String?
+  phoneNumber String?
+  uploadDate  String?
   country     String?
   createdAt   DateTime @default(now()) @db.DateTime(0)
   imageURL    String?
   fish        String?
-  phoneNumber String?  @unique(length: 11)
   tag         String?
   desc        String?  @db.LongText
-  uploadDate  String?
 }
 
 model User {

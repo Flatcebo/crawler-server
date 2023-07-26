@@ -8,7 +8,10 @@ interface UseMutationState<T> {
   error?: object;
 }
 
-type UseMutationResult<T> = [(data: any) => void, UseMutationState<T>];
+type UseMutationResult<T> = [
+  (data: any) => Promise<T | null>,
+  UseMutationState<T>
+];
 
 export default function useMutation<T = any>(
   URL: string
@@ -21,9 +24,9 @@ export default function useMutation<T = any>(
 
   const { loading, data, error } = state;
 
-  function mutation(data: any) {
+  function mutation(data: any): Promise<T | null> {
     setState({ ...state, loading: true });
-    fetch(URL, {
+    return fetch(URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -31,9 +34,18 @@ export default function useMutation<T = any>(
       body: JSON.stringify(data),
     })
       .then(response => response.json().catch(() => {}))
-      .then(data => setState(prev => ({ ...prev, data })))
-      .catch(error => setState(prev => ({ ...prev, error })))
-      .finally(() => setState(prev => ({ ...prev, loading: false })));
+      .then(data => {
+        setState(prev => ({ ...prev, data }));
+        return data;
+      })
+      .catch(error => {
+        setState(prev => ({ ...prev, error }));
+        return null;
+      })
+      .then(data => {
+        setState(prev => ({ ...prev, loading: false }));
+        return data;
+      });
   }
 
   return [mutation, { loading, data, error }];
