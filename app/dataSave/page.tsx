@@ -72,11 +72,15 @@ export default function Page() {
 
   const onSubmits = async (data: any) => {
     // console.log("병신이냐");
-    let page = 1;
+    let page = 16;
     const totalPages = 3600; // 총 페이지 수
-    const delayInMilliseconds = 10000; // 1초 지연 시간
+    const delayInMilliseconds = 3000; // 1초 지연 시간
 
-    while (page <= totalPages) {
+    while (true) {
+      if (page >= totalPages) {
+        console.log("break");
+        break;
+      }
       console.log("페이지 번호 =>", page);
       const url = `&page=${page}`;
       const newQuery = { uri: data.uri + url };
@@ -154,7 +158,7 @@ export default function Page() {
     return (from as any).items.map((value: any, i: any) => ({
       uploadDate: value.listDate.replace("", "`"),
       name: value.listName ?? "---이름을 표기할 수 없습니다---",
-      url: value.listSubject,
+      url: value.listSubject ?? "",
       listNumber: value.listSubject.replace(
         "https://innak.kr/bbs/board.php?bo_table=",
         ""
@@ -314,7 +318,7 @@ export default function Page() {
             return (
               <div className="overflow-y-scroll border-t-[50px] border-[#0000ff56] ">
                 <div className="">
-                  {/* <div className=" m-[10px] ">{(value as any).detailDesc}</div> */}
+                  <div className=" m-[10px] ">{(value as any).detailDesc}</div>
                   {/* <div className=" m-[10px] ">{(value as any).results}</div> */}
                   {/* <div className=" m-[10px] ">{(value as any).detailImg}</div> */}
                   {/* <div>

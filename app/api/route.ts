@@ -9,8 +9,9 @@ const prisma = new PrismaClient();
 
 type Desc = {
   data?: any;
-  title?: cheerio.Cheerio<Element> | string;
-  userName?: cheerio.Cheerio<Element> | string;
+  title?: cheerio.Cheerio<Element>[] | string[];
+  userName?: cheerio.Cheerio<Element>[] | string[];
+  // listTitle?: cheerio.Cheerio<Element>[] | string[];
   length?: any;
 };
 
@@ -81,20 +82,30 @@ export async function POST(req: Request, res: Response) {
   // * table = 지역이름
   // 주소 내의 table=,id= 분리해서 DB에 저장
 
+  // class="list-item bg-light" << 없애야함
+
   // 리스트 도메인
   const listSubject: Desc = $(
-    "#list-body .list-item .wr-subject a.item-subject"
+    "#list-body .list-item:not(.bg-light) .wr-subject a.item-subject"
   );
   // 리스트 제목
   const listTitle: Desc = $(
-    "#list-body .list-item .wr-subject a.item-subject span"
+    "#list-body .list-item .wr-subject a.item-subject span:first-child"
   );
   // 리스트 업체명
-  const listName: Desc | any = $("#list-body .list-item .wr-name .member"); // 이미지 파일로 된 업체명은 못가져옴
+  const listName: Desc | any = $(
+    "#list-body .list-item:not(.bg-light) .wr-name .member"
+  );
   // 리스트 게시일
-  const listDate: Desc | any = $("#list-body .list-item .wr-date");
+  const listDate: Desc | any = $(
+    "#list-body .list-item:not(.bg-light) .wr-date"
+  );
   // 리스트 유저 ID
-  const listUserId: Desc | any = $("#list-body .list-item .wr-name a");
+  const listUserId: Desc | any = $(
+    "#list-body .list-item:not(.bg-light) .wr-name a"
+  );
+
+  // [...document.querySelectorAll(".list-item > .wr-subject > a > .wr-icon")].map(item => item.nextSibling.data.trim())
 
   // 지역 링크
   const countryNav = $(".nav li");
@@ -119,6 +130,8 @@ export async function POST(req: Request, res: Response) {
   // const items = [...new Array(listTitle.length)].map((_, i) => ({
 
   // console.log(await detail((listSubject as any).attribs.href ?? ""));
+
+  // 데이터 찢어줌
   const items: any = await Promise.all(
     [...new Array(listSubject.length)].map(async (_, i) => ({
       // akak: console.log(
@@ -126,7 +139,9 @@ export async function POST(req: Request, res: Response) {
       // ),
       addr: (await detail((listSubject as any)[i]?.attribs.href)) ?? "",
       // phoneNumbers: console.log((listSubject as any)[i]?.attribs.href),
-      listTitle: (listTitle as any)[i]?.next.data.trim() ?? "",
+      listTitle: (listTitle as any)[i]
+        ? (listTitle as any)[i]?.next.data.trim()
+        : undefined,
       listSubject: (listSubject as any)[i]?.attribs.href ?? "",
       listName: (listName as any)[i]?.children[0].data ?? "",
       listDate: (listDate as any)[i]?.children[0].data.trim() ?? "",
@@ -160,6 +175,7 @@ export async function POST(req: Request, res: Response) {
       userName: value.listName,
       userId: value.listUserId,
       uploadDate: value.listDate,
+      url: value.listSubject,
       imageURL: value.addr.detailImg.join(", "),
       mainNumber: value.addr.results[0],
       phoneNumber: value.addr.results.join(", ").replace(/\D/g, ","),

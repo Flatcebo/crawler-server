@@ -22,6 +22,7 @@ model Description {
   country     String?
   createdAt   DateTime @default(now()) @db.DateTime(0)
   imageURL    String?
+  url         String?
   fish        String?
   tag         String?
   desc        String?  @db.LongText
