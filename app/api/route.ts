@@ -1,6 +1,6 @@
 import * as cheerio from "cheerio";
 import { NextResponse } from "next/server";
-import { createDesc } from "./create";
+
 import { PrismaClient } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
@@ -18,11 +18,6 @@ type Desc = {
 // addr 문제
 export async function POST(req: Request, res: Response) {
   const detail = async (addr: string) => {
-    // if (addr === undefined) {
-    //   return undefined;
-    // }
-    // const json = JSON.stringify(addr);
-
     const $ = cheerio.load(
       await (await fetch(addr).then((res: any) => res)).text()
     );
@@ -63,12 +58,6 @@ export async function POST(req: Request, res: Response) {
   };
   //----------------------------------------------------------------------------------------
 
-  //   0페이지와 1페이지는 같음
-  //   &page=2
-  // map((_: any,i: any) => {
-
-  // })
-
   const uri = (await req.json()).uri;
 
   console.log("uri ===>", uri);
@@ -76,13 +65,8 @@ export async function POST(req: Request, res: Response) {
     await //
     (await fetch(uri).then((res: any) => res)).text()
   );
-  // console.log($.root().children()[0].children);
 
   new Array(50).map(i => i);
-  // * table = 지역이름
-  // 주소 내의 table=,id= 분리해서 DB에 저장
-
-  // class="list-item bg-light" << 없애야함
 
   // 리스트 도메인
   const listSubject: Desc = $(
@@ -112,33 +96,16 @@ export async function POST(req: Request, res: Response) {
   // 지역 이름
   const countryName = $(".nav li a");
 
-  // console.log((countryName as any)[0].children[0].data.trim());
   const cate: any = [...new Array(countryNav.length)].map((_, i) => ({
     countryNav: (countryNav as any)[i].children[1].attribs?.href,
     countryName: (countryName as any)[i].children[0].data.trim(),
   }));
 
-  // listSubject, listTitle length 문제
-  // https://innak.kr/bbs/board.php?bo_table=D02_2023&page=173 , 245
-
-  // 업체명이 이미지 파일이거나 없는 경우에 어레이 렝스오류
-  // , 사용시 다른 레이블로 글이 넘어감
-
   // -----------------------------------------------------------
-  // 다른 아이템을 detail함수로 감싸면 addr로 받아져서 오류뜸
-
-  // const items = [...new Array(listTitle.length)].map((_, i) => ({
-
-  // console.log(await detail((listSubject as any).attribs.href ?? ""));
-
   // 데이터 찢어줌
   const items: any = await Promise.all(
     [...new Array(listSubject.length)].map(async (_, i) => ({
-      // akak: console.log(
-      //   await detail((listSubject as any)[i]?.attribs.href ?? "")
-      // ),
       addr: (await detail((listSubject as any)[i]?.attribs.href)) ?? "",
-      // phoneNumbers: console.log((listSubject as any)[i]?.attribs.href),
       listTitle: (listTitle as any)[i]
         ? (listTitle as any)[i]?.next.data.trim()
         : undefined,
@@ -153,23 +120,9 @@ export async function POST(req: Request, res: Response) {
     }))
   );
 
-  // console.log(detail((listSubject as any)[0].attribs.href));
   // -----------------------------------------------------------------------------------------------------
 
-  // const item: any = [...new Array(listTitle.length)].map((_, i) => ({
-  //   listTitle: (listTitle as any)[i].next.data.trim(),
-  // }));
-
-  // console.log((listName as any)[1].children[0].data);
-  // countryNav: (countryNav as any)[i].href,
-
-  // console.log((listUserId as any)[0].attribs.onclick);
-
-  // const regex: any =
-  //   /(?=.)(?:02|0[13-9]{1}[0-9]{1})[^0-9]*[0-9]{3,4}[^0-9]*[0-9]{4}/g;
-
-  // let result: any = regex.exec(detailItems.detailDesc);
-  const user = await prisma.description.createMany({
+  const user = await prisma.getStone.createMany({
     data: items.map((value: any) => ({
       title: value.listTitle,
       userName: value.listName,
@@ -186,16 +139,6 @@ export async function POST(req: Request, res: Response) {
     })),
     skipDuplicates: true,
   });
-
-  // await fetch("http://localhost:3000/api/get", {
-  //   method: "POST",
-  //   headers: {
-  //     "Content-Type": "application/json",
-  //   },
-  //   body: JSON.stringify({
-  //     listSubject,
-  //   }),
-  // });
 
   return NextResponse.json({ cate, items, user });
 }

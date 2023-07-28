@@ -28,6 +28,23 @@ model Description {
   desc        String?  @db.LongText
 }
 
+model GetStone {
+  id          Int      @id @default(autoincrement())
+  userId      String?
+  title       String?
+  userName    String?
+  mainNumber  String?
+  phoneNumber String?
+  uploadDate  String?
+  country     String?
+  createdAt   DateTime @default(now()) @db.DateTime(0)
+  imageURL    String?
+  url         String?
+  fish        String?
+  tag         String?
+  desc        String?  @db.LongText
+}
+
 model User {
   id      Int    @id @default(autoincrement())
   desc    String

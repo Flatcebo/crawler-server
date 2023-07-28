@@ -71,10 +71,12 @@ export default function Page() {
   //   useMutations(`/api/crawler`);
 
   const onSubmits = async (data: any) => {
-    // console.log("병신이냐");
-    let page = 16;
-    const totalPages = 3600; // 총 페이지 수
-    const delayInMilliseconds = 3000; // 1초 지연 시간
+    let page = 3;
+    const totalPages = 600; // 총 페이지 수
+    // ........선상
+    // let page = 2671;
+    // const totalPages = 3600; // 총 페이지 수
+    const delayInMilliseconds = 1000;
 
     while (true) {
       if (page >= totalPages) {
