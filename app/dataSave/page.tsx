@@ -71,12 +71,10 @@ export default function Page() {
   //   useMutations(`/api/crawler`);
 
   const onSubmits = async (data: any) => {
-    let page = 3;
+    // 1~ 41826 데이터 뽑으면 됨
+    let page = 1;
     const totalPages = 600; // 총 페이지 수
-    // ........선상
-    // let page = 2671;
-    // const totalPages = 3600; // 총 페이지 수
-    const delayInMilliseconds = 1000;
+    const delayInMilliseconds = 3000;
 
     while (true) {
       if (page >= totalPages) {

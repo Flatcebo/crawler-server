@@ -122,7 +122,7 @@ export async function POST(req: Request, res: Response) {
 
   // -----------------------------------------------------------------------------------------------------
 
-  const user = await prisma.getStone.createMany({
+  const user = await prisma.tB_Innak_Rock_23.createMany({
     data: items.map((value: any) => ({
       title: value.listTitle,
       userName: value.listName,

@@ -11,7 +11,7 @@ model Categories {
   id Int @id @default(autoincrement())
 }
 
-model Description {
+model TB_Innak_Boat_23 {
   id          Int      @id @default(autoincrement())
   userId      String?
   title       String?
@@ -28,7 +28,79 @@ model Description {
   desc        String?  @db.LongText
 }
 
-model GetStone {
+model TB_Innak_Rock_23 {
+  id          Int      @id @default(autoincrement())
+  userId      String?
+  title       String?
+  userName    String?
+  mainNumber  String?
+  phoneNumber String?
+  uploadDate  String?
+  country     String?
+  createdAt   DateTime @default(now()) @db.DateTime(0)
+  imageURL    String?
+  url         String?
+  fish        String?
+  tag         String?
+  desc        String?  @db.LongText
+}
+
+// 2022 인낚 선상
+model TB_Innak_Boat_22 {
+  id          Int      @id @default(autoincrement())
+  userId      String?
+  title       String?
+  userName    String?
+  mainNumber  String?
+  phoneNumber String?
+  uploadDate  String?
+  country     String?
+  createdAt   DateTime @default(now()) @db.DateTime(0)
+  imageURL    String?
+  url         String?
+  fish        String?
+  tag         String?
+  desc        String?  @db.LongText
+}
+
+// 2022 인낚 갯바위
+model TB_Innak_Rock_22 {
+  id          Int      @id @default(autoincrement())
+  userId      String?
+  title       String?
+  userName    String?
+  mainNumber  String?
+  phoneNumber String?
+  uploadDate  String?
+  country     String?
+  createdAt   DateTime @default(now()) @db.DateTime(0)
+  imageURL    String?
+  url         String?
+  fish        String?
+  tag         String?
+  desc        String?  @db.LongText
+}
+
+// 2021 인낚 선상
+model TB_Innak_Boat_21 {
+  id          Int      @id @default(autoincrement())
+  userId      String?
+  title       String?
+  userName    String?
+  mainNumber  String?
+  phoneNumber String?
+  uploadDate  String?
+  country     String?
+  createdAt   DateTime @default(now()) @db.DateTime(0)
+  imageURL    String?
+  url         String?
+  fish        String?
+  tag         String?
+  desc        String?  @db.LongText
+}
+
+// 2021 인낚 갯바위
+model TB_Innak_Rock_21 {
   id          Int      @id @default(autoincrement())
   userId      String?
   title       String?
