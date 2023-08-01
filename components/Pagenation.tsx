@@ -1,13 +1,13 @@
 "use client";
 
-const Pagenation = ({ onClickPrev, onClickNext, value }: any) => {
+const Pagenation = ({ onClickPrev, onClickNext, value, onChange }: any) => {
   return (
-    <div className="my-[2%]">
+    <div>
       <nav aria-label="Page navigation example" className="flex justify-center">
         <div className="flex items-center -space-x-px h-10 text-base">
           <div>
             <button
-              onClick={e => onClickPrev(e)}
+              onClick={() => onClickPrev()}
               className="flex items-center justify-center px-6 h-[4rem] ml-0 leading-tight text-gray-500 bg-white border
                  border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700
                   dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
@@ -22,9 +22,9 @@ const Pagenation = ({ onClickPrev, onClickNext, value }: any) => {
               >
                 <path
                   stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
                   d="M5 1 1 5l4 4"
                 />
               </svg>
@@ -37,11 +37,12 @@ const Pagenation = ({ onClickPrev, onClickNext, value }: any) => {
                  hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400
                   dark:hover:bg-gray-700 dark:hover:text-white"
             value={value}
+            onChange={onChange}
           />
 
           <div>
             <button
-              onClick={e => onClickNext(e)}
+              onClick={() => onClickNext()}
               className="flex items-center justify-center px-6 h-[4rem] leading-tight text-gray-500 bg-white border border-gray-300 
                 rounded-r-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400
                  dark:hover:bg-gray-700 dark:hover:text-white"
@@ -56,9 +57,9 @@ const Pagenation = ({ onClickPrev, onClickNext, value }: any) => {
               >
                 <path
                   stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
                   d="m1 9 4-4-4-4"
                 />
               </svg>

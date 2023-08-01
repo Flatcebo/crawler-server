@@ -7,9 +7,7 @@ import useMutation from "@/lib/client/useMutation";
 
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import { CSVLink } from "react-csv";
 import { useForm } from "react-hook-form";
-import { mutate } from "swr";
 
 type ExcelDataType = {
   listSubject: String;
@@ -20,7 +18,6 @@ type ExcelDataType = {
 };
 
 export default function Page() {
-  const [sendedURI, setSendedURI] = useState(false);
   const [detailON, setDetailOn] = useState<any>(false);
   // const fetcher = (URI: any) => axios.get(URI).then(res => res.data);
   const [detailBtnON, setDetailBtnOn] = useState<any>(true);
@@ -73,7 +70,7 @@ export default function Page() {
   const onSubmits = async (data: any) => {
     // 1~ 41826 데이터 뽑으면 됨
     let page = 1;
-    const totalPages = 600; // 총 페이지 수
+    const totalPages = 500; // 총 페이지 수
     const delayInMilliseconds = 3000;
 
     while (true) {

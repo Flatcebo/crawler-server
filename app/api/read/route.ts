@@ -12,88 +12,108 @@ export async function GET(req: Request) {
   //   }
 
   const params = new URL(req.url).searchParams;
+  const cate: any = params.get("cate");
+  const year: any = params.get("year");
   const offset: any = params.get("offset");
   const count: any = params.get("count");
   const keyword: any = params.get("keyword");
-  console.log("param =====>", params);
+  //   console.log("param =====>", params);
+  console.log("cate =====>", cate);
+  console.log("year =====>", year);
   console.log("offset =====>", offset);
   console.log("count =====>", count);
   console.log("keyword =====>", keyword);
 
   try {
-    const allCate = await prisma.tB_Innak_Boat_22.findMany({
-      select: {
-        userId: true,
-        title: true,
-        userName: true,
-        mainNumber: true,
-      },
-      where: {
-        OR: [
-          { userId: { contains: keyword } },
-          { userName: { contains: keyword } },
-          { title: { contains: keyword } },
-          { mainNumber: { contains: keyword } },
-        ],
-      },
-      skip: offset ? parseInt(offset) : undefined,
-      take: count ? parseInt(count) : 20,
-    });
-    const selectCate = await prisma.tB_Innak_Boat_22.findMany({
-      select: {
-        userId: true,
-        title: true,
-        userName: true,
-        mainNumber: true,
-      },
-      where: {
-        OR: [
-          { userId: { contains: keyword } },
-          { userName: { contains: keyword } },
-        ],
-      },
-      skip: offset ? parseInt(offset) : undefined,
-      take: count ? parseInt(count) : 15,
-    });
+    if (cate == "전체" && keyword) {
+      const allCate_Boat_22 = await prisma.tB_Innak_Boat_22.findMany({
+        select: {
+          userId: true,
+          title: true,
+          userName: true,
+          mainNumber: true,
+        },
+        // 검색기능 입력한 키워드 값을 해당 컬럼들에 조회한다
+        where: {
+          OR: [
+            { userId: { contains: keyword } },
+            { userName: { contains: keyword } },
+            { title: { contains: keyword } },
+            { mainNumber: { contains: keyword } },
+          ],
+        },
+        skip: offset ? parseInt(offset) : undefined,
+        take: count ? parseInt(count) : 20,
+      });
+
+      return NextResponse.json({ allCate_Boat_22 });
+    } else if (cate == "업체명" && keyword) {
+      const userNameCate_Boat_22 = await prisma.tB_Innak_Boat_22.findMany({
+        select: {
+          userId: true,
+          title: true,
+          userName: true,
+          mainNumber: true,
+        },
+        where: {
+          OR: [{ userName: { contains: keyword } }],
+        },
+        skip: offset ? parseInt(offset) : undefined,
+        take: count ? parseInt(count) : 20,
+      });
+      return NextResponse.json({ userNameCate_Boat_22 });
+    } else if (cate == "유저 아이디" && keyword) {
+      const userIdCate_Boat_22 = await prisma.tB_Innak_Boat_22.findMany({
+        select: {
+          userId: true,
+          title: true,
+          userName: true,
+          mainNumber: true,
+        },
+        where: {
+          OR: [{ userId: { contains: keyword } }],
+        },
+        skip: offset ? parseInt(offset) : undefined,
+        take: count ? parseInt(count) : 20,
+      });
+      return NextResponse.json({ userIdCate_Boat_22 });
+    } else if (cate == "글제목" && keyword) {
+      const titleCate_Boat_22 = await prisma.tB_Innak_Boat_22.findMany({
+        select: {
+          userId: true,
+          title: true,
+          userName: true,
+          mainNumber: true,
+        },
+        where: {
+          OR: [{ title: { contains: keyword } }],
+        },
+        skip: offset ? parseInt(offset) : undefined,
+        take: count ? parseInt(count) : 20,
+      });
+      return NextResponse.json({ titleCate_Boat_22 });
+    } else if (cate == "대표번호" && keyword) {
+      const mainNumberCate_Boat_22 = await prisma.tB_Innak_Boat_22.findMany({
+        select: {
+          userId: true,
+          title: true,
+          userName: true,
+          mainNumber: true,
+        },
+        where: {
+          OR: [{ mainNumber: { contains: keyword } }],
+        },
+        skip: offset ? parseInt(offset) : undefined,
+        take: count ? parseInt(count) : 20,
+      });
+      return NextResponse.json({ mainNumberCate_Boat_22 });
+    }
 
     // return res.status(200).json({ ok: true, descs });
-    return NextResponse.json({ allCate, selectCate });
+    // return NextResponse.json({ allCate_Boat_22 });
   } catch (error) {
     return NextResponse.json({ error: "내부 서버 오류가 발생했습니다" });
   } finally {
     await prisma.$disconnect();
   }
 }
-// .then(res => res);
-//   console.log(descs);
-
-//   const result = await fetch(req.url).then((res: any) => res.json());
-
-//   const searchKeyword = async () => {
-//     result({
-//       dd: await prisma.tB_Innak_Boat_22.findMany({
-//         select: {
-//           userId: true,
-//           title: true,
-//           userName: true,
-//           mainNumber: true,
-//         },
-//       }),
-//     });
-//   };
-//     const descs = await prisma.description.findMany({
-//         select: {
-//           userId: true,
-//           title: true,
-//           userName: true,
-//           mainNumber: true,
-//         },
-//         //   where: {
-//         //     OR: [
-//         //       { userId: { contains: keyword } },
-//         //       { userName: { contains: keyword } },
-//         //     ],
-//         //   },
-//         take: 10,
-//       });
-// }
