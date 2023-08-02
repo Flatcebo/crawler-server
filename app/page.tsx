@@ -12,6 +12,7 @@ export default function Home() {
   const [pageNumber, setPageNumber] = useState<any>(1);
   const [selectYear, setSelectYear] = useState<any>("2023");
   const [selectCate, setSelectCate] = useState<any>("전체");
+  const [selectTheme, setSelectTheme] = useState<any>("선상낚시");
   const [loading, setLoading] = useState<boolean>(false);
 
   const { register, handleSubmit } = useForm();
@@ -23,18 +24,20 @@ export default function Home() {
   const fetcher = (
     cate: any,
     year: any,
+    theme: any,
     offset: any,
     count: any,
     keyword: any
   ) => {
     setLoading(true);
     fetch(
-      `/api/read?cate=${cate}&year=${year}&offset=${offset}&count=${count}&keyword=${keyword}`
+      `/api/read?cate=${cate}&year=${year}${theme}&offset=${offset}&count=${count}&keyword=${keyword}`
     )
       .then((res: any) => res.json())
       .then((data: any) => {
-        console.log(data);
-        if (data > [0]) {
+        // console.log(data);
+        if (data.categories.length > 0) {
+          //   console.log("data =======>", data);
           setSearchResults(data);
           setLoading(false);
           return data;
@@ -54,9 +57,13 @@ export default function Home() {
   };
 
   const onSubmits = async () => {
+    if (searchData.length < 1) {
+      alert("검색어를 입력해주세요.");
+    }
     const res = await fetcher(
       selectCate,
       selectYear,
+      selectTheme,
       (pageNumber - 1) * 20,
       20,
       searchData
@@ -79,6 +86,9 @@ export default function Home() {
   const onChangeCate = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSelectCate(e);
   };
+  const onChangeTheme = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectTheme(e);
+  };
 
   return (
     <div className="relative h-full w-full">
@@ -99,7 +109,6 @@ export default function Home() {
 
             {/* 연도 드롭다운 */}
 
-            {/* 23년 데이터 없음 , 22년 데이터로 선택해야지 데이터 보여주게 해야함. */}
             <Dropdown
               mainButtonClassName="flex-shrink-0 z-10 inline-flex items-center justify-evenly w-[8rem] h-[5rem] py-2.5 px-4 text-lg 
                                     font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-l-lg hover:bg-gray-200  
@@ -122,6 +131,27 @@ export default function Home() {
               button3Name={"2021"}
               button3Click={() => {
                 setSelectYear("2021");
+              }}
+              dropdownClassName="z-10 absolute bg-white divide-y divide-gray-100 rounded-lg shadow w-32 dark:bg-gray-700"
+            />
+
+            <Dropdown
+              mainButtonClassName="flex-shrink-0 z-10 inline-flex items-center justify-evenly w-[8rem] h-[5rem] py-2.5 px-4 text-lg 
+                                    font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 hover:bg-gray-200  
+                                    focus:outline-none dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700
+                                    dark:text-white dark:border-gray-600"
+              mainButtonDefaultValue={"선상낚시"}
+              mainButtonName={selectTheme}
+              mainButtonValue={onChangeTheme}
+              button1
+              button1Name={"선상낚시"}
+              button1Click={() => {
+                setSelectTheme("선상낚시");
+              }}
+              button2
+              button2Name={"갯바위"}
+              button2Click={() => {
+                setSelectTheme("갯바위");
               }}
               dropdownClassName="z-10 absolute bg-white divide-y divide-gray-100 rounded-lg shadow w-32 dark:bg-gray-700"
             />
@@ -163,7 +193,7 @@ export default function Home() {
               dropdownClassName="z-10 absolute bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700"
             />
 
-            <div className="relative w-full  ">
+            <div className="relative w-full">
               <input
                 type="search"
                 id="search-dropdown"
@@ -235,7 +265,7 @@ export default function Home() {
               </tr>
             </thead>
 
-            {searchResults?.allCate_Boat_22?.map((items: any, i: any) => (
+            {searchResults?.categories?.map((items: any, i: any) => (
               <>
                 <tbody key={i}>
                   <tr className="bg-white border-b dark:bg-gray-900 dark:border-gray-700 ">
@@ -254,80 +284,6 @@ export default function Home() {
                 </tbody>
               </>
             ))}
-            {searchResults?.userIdCate_Boat_22?.map((items: any, i: any) => (
-              <>
-                <tbody key={i}>
-                  <tr className="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
-                    <th
-                      scope="row"
-                      className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                    >
-                      {i + 1}
-                    </th>
-                    <td className="px-6 py-4">{items.userName}</td>
-                    <td className="px-6 py-4">{items.userId}</td>
-                    <td className="px-6 py-4">{items.title}</td>
-                    <td className="px-6 py-4">{items.mainNumber}</td>
-                  </tr>
-                </tbody>
-              </>
-            ))}
-            {searchResults?.userNameCate_Boat_22?.map((items: any, i: any) => (
-              <>
-                <tbody key={i}>
-                  <tr className="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
-                    <th
-                      scope="row"
-                      className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                    >
-                      {i + 1}
-                    </th>
-                    <td className="px-6 py-4">{items.userName}</td>
-                    <td className="px-6 py-4">{items.userId}</td>
-                    <td className="px-6 py-4">{items.title}</td>
-                    <td className="px-6 py-4">{items.mainNumber}</td>
-                  </tr>
-                </tbody>
-              </>
-            ))}
-            {searchResults?.titleCate_Boat_22?.map((items: any, i: any) => (
-              <>
-                <tbody key={i}>
-                  <tr className="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
-                    <th
-                      scope="row"
-                      className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                    >
-                      {i + 1}
-                    </th>
-                    <td className="px-6 py-4">{items.userName}</td>
-                    <td className="px-6 py-4">{items.userId}</td>
-                    <td className="px-6 py-4">{items.title}</td>
-                    <td className="px-6 py-4">{items.mainNumber}</td>
-                  </tr>
-                </tbody>
-              </>
-            ))}
-            {searchResults?.mainNumberCate_Boat_22?.map(
-              (items: any, i: any) => (
-                <>
-                  <tbody key={i}>
-                    <tr className="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
-                      <th
-                        scope="row"
-                        className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                      >
-                        {i + 1}
-                      </th>
-                      <td className="px-6 py-4">{items.userName}</td>
-                      <td className="px-6 py-4">{items.userId}</td>
-                      <td className="px-6 py-4">{items.title}</td>
-                      <td className="px-6 py-4">{items.mainNumber}</td>
-                    </tr>
-                  </tbody>
-                </>
-              )
-            )}
           </table>
         </div>
       )}

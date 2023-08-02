@@ -99,6 +99,27 @@ model TB_Innak_Boat_21 {
   desc        String?  @db.LongText
 }
 
+// 2020 디낚 
+model TB_Dinak_Master_20 {
+  id          Int      @id @default(autoincrement())
+  userId      String?
+  title       String?
+  userName    String?
+  mainNumber  String?
+  phoneNumber String?
+  uploadDate  String?
+  country     String?
+  createdAt   DateTime @default(now()) @db.DateTime(0)
+  imageURL    String?
+  url         String?
+  fish        String?
+  tag         String?
+  region      String?
+  numb        String?
+  type        String?
+  desc        String?  @db.LongText
+}
+
 // 2021 인낚 갯바위
 model TB_Innak_Rock_21 {
   id          Int      @id @default(autoincrement())
@@ -114,6 +135,69 @@ model TB_Innak_Rock_21 {
   url         String?
   fish        String?
   tag         String?
+  desc        String?  @db.LongText
+}
+
+// 2021 디낚
+model TB_Dinak_Master_21 {
+  id          Int      @id @default(autoincrement())
+  userId      String?
+  title       String?
+  userName    String?
+  mainNumber  String?
+  phoneNumber String?
+  uploadDate  String?
+  country     String?
+  createdAt   DateTime @default(now()) @db.DateTime(0)
+  imageURL    String?
+  url         String?
+  fish        String?
+  tag         String?
+  region      String?
+  numb        String?
+  type        String?
+  desc        String?  @db.LongText
+}
+
+// 2022 디낚
+model TB_Dinak_Master_22 {
+  id          Int      @id @default(autoincrement())
+  userId      String?
+  title       String?
+  userName    String?
+  mainNumber  String?
+  phoneNumber String?
+  uploadDate  String?
+  country     String?
+  createdAt   DateTime @default(now()) @db.DateTime(0)
+  imageURL    String?
+  url         String?
+  fish        String?
+  tag         String?
+  region      String?
+  numb        String?
+  type        String?
+  desc        String?  @db.LongText
+}
+
+// 2023 디낚 
+model TB_Dinak_Master_23 {
+  id          Int      @id @default(autoincrement())
+  userId      String?
+  title       String?
+  userName    String?
+  mainNumber  String?
+  phoneNumber String?
+  uploadDate  String?
+  country     String?
+  createdAt   DateTime @default(now()) @db.DateTime(0)
+  imageURL    String?
+  url         String?
+  fish        String?
+  tag         String?
+  region      String?
+  numb        String?
+  type        String?
   desc        String?  @db.LongText
 }
 

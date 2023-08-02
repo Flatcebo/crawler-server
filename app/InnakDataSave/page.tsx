@@ -61,7 +61,8 @@ export default function Page() {
     defaultValues: { uri: "" },
   });
 
-  const [createCrawling, { loading, data, error }] = useMutation(`/api`);
+  const [createCrawling, { loading, data, error }] =
+    useMutation(`/api/innakDataSave`);
 
   // const { data: data1 } = useSWR(`/api/crawler`);
   // const [createCrawling1, { loading: loading1, data: data1, error: error1 }] =
@@ -123,7 +124,9 @@ export default function Page() {
     // console.log(addrs);
     const list: any = [];
     for (const it of addrs) {
-      const result = await fetch(`/api?addr=${encodeURIComponent(it)}`)
+      const result = await fetch(
+        `/api/innakDataSave?addr=${encodeURIComponent(it)}`
+      )
         .then(res => res.json())
         .then(res => (res as any).detailItems)
         .catch(error => console.log("error => ", error));
