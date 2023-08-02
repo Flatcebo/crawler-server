@@ -4,9 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import Pagenation from "@/components/Pagenation";
 import Dropdown from "@/components/Dropdown";
-import { disconnect } from "process";
 
-export default function Home(upa: any) {
+export default function Home() {
   const [mounted, setMounted] = useState<boolean>(false);
   const [searchResults, setSearchResults] = useState<any>([]);
   const [searchData, setSearchData] = useState<any>("");
@@ -62,8 +61,6 @@ export default function Home(upa: any) {
       20,
       searchData
     );
-
-    // console.log("datas =>", datas);
   };
 
   const onClickNext = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -71,7 +68,6 @@ export default function Home(upa: any) {
   };
   const onClickPrev = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (pageNumber === 0) {
-      return;
     }
     setPageNumber(pageNumber - 1);
   };
@@ -102,6 +98,8 @@ export default function Home(upa: any) {
             </label>
 
             {/* 연도 드롭다운 */}
+
+            {/* 23년 데이터 없음 , 22년 데이터로 선택해야지 데이터 보여주게 해야함. */}
             <Dropdown
               mainButtonClassName="flex-shrink-0 z-10 inline-flex items-center justify-evenly w-[8rem] h-[5rem] py-2.5 px-4 text-lg 
                                     font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-l-lg hover:bg-gray-200  
@@ -256,7 +254,7 @@ export default function Home(upa: any) {
                 </tbody>
               </>
             ))}
-            {searchResults?.userIdCate?.map((items: any, i: any) => (
+            {searchResults?.userIdCate_Boat_22?.map((items: any, i: any) => (
               <>
                 <tbody key={i}>
                   <tr className="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
@@ -274,7 +272,7 @@ export default function Home(upa: any) {
                 </tbody>
               </>
             ))}
-            {searchResults?.userNameCate?.map((items: any, i: any) => (
+            {searchResults?.userNameCate_Boat_22?.map((items: any, i: any) => (
               <>
                 <tbody key={i}>
                   <tr className="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
@@ -333,24 +331,6 @@ export default function Home(upa: any) {
           </table>
         </div>
       )}
-
-      {/* <div>
-          <ul>
-            {searchData.map((item: any) => (
-              <li key={item.id}>{item.name}</li>
-            ))}
-          </ul>
-          <button onClick={handlePrevPage} disabled={currentPage === 1}>
-            이전 페이지
-          </button>
-          <span>{currentPage}</span>
-          <button
-            onClick={handleNextPage}
-            disabled={currentPage === totalPages}
-          >
-            다음 페이지
-          </button>
-        </div> */}
     </div>
   );
 }

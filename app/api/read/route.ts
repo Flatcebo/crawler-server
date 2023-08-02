@@ -7,26 +7,31 @@ export const dynamic = "force-dynamic";
 const prisma = new PrismaClient();
 
 export async function GET(req: Request) {
-  //   if (req.method !== "GET") {
-  //     return NextResponse.json({ error: "허용되지 않는 메서드입니다" });
-  //   }
-
   const params = new URL(req.url).searchParams;
   const cate: any = params.get("cate");
   const year: any = params.get("year");
   const offset: any = params.get("offset");
   const count: any = params.get("count");
   const keyword: any = params.get("keyword");
-  //   console.log("param =====>", params);
-  console.log("cate =====>", cate);
-  console.log("year =====>", year);
-  console.log("offset =====>", offset);
-  console.log("count =====>", count);
-  console.log("keyword =====>", keyword);
+  console.log("param =====>", params);
+
+  let Boat: any = prisma.tB_Innak_Boat_23;
+
+  switch (year) {
+    case "2023":
+      Boat = prisma.tB_Innak_Boat_23;
+      break;
+    case "2022":
+      Boat = prisma.tB_Innak_Boat_22;
+      break;
+    case "2021":
+      Boat = prisma.tB_Innak_Boat_21;
+      break;
+  }
 
   try {
     if (cate == "전체" && keyword) {
-      const allCate_Boat_22 = await prisma.tB_Innak_Boat_22.findMany({
+      const allCate_Boat_22 = await Boat.findMany({
         select: {
           userId: true,
           title: true,
