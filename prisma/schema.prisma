@@ -99,27 +99,6 @@ model TB_Innak_Boat_21 {
   desc        String?  @db.LongText
 }
 
-// 2020 디낚 
-model TB_Dinak_Master_20 {
-  id          Int      @id @default(autoincrement())
-  userId      String?
-  title       String?
-  userName    String?
-  mainNumber  String?
-  phoneNumber String?
-  uploadDate  String?
-  country     String?
-  createdAt   DateTime @default(now()) @db.DateTime(0)
-  imageURL    String?
-  url         String?
-  fish        String?
-  tag         String?
-  region      String?
-  numb        String?
-  type        String?
-  desc        String?  @db.LongText
-}
-
 // 2021 인낚 갯바위
 model TB_Innak_Rock_21 {
   id          Int      @id @default(autoincrement())
@@ -138,6 +117,27 @@ model TB_Innak_Rock_21 {
   desc        String?  @db.LongText
 }
 
+// 2020 디낚 
+model TB_Dinak_Master_20 {
+  id          Int      @id @default(autoincrement())
+  userId      String?
+  title       String?
+  userName    String?
+  mainNumber  String?
+  phoneNumber String?  @db.LongText
+  uploadDate  String?
+  country     String?
+  createdAt   DateTime @default(now()) @db.DateTime(0)
+  imageURL    String?  @db.LongText
+  url         String?
+  fish        String?
+  tag         String?
+  region      String?
+  numb        String?
+  type        String?
+  desc        String?  @db.LongText
+}
+
 // 2021 디낚
 model TB_Dinak_Master_21 {
   id          Int      @id @default(autoincrement())
@@ -145,11 +145,11 @@ model TB_Dinak_Master_21 {
   title       String?
   userName    String?
   mainNumber  String?
-  phoneNumber String?
+  phoneNumber String?  @db.LongText
   uploadDate  String?
   country     String?
   createdAt   DateTime @default(now()) @db.DateTime(0)
-  imageURL    String?
+  imageURL    String?  @db.LongText
   url         String?
   fish        String?
   tag         String?
@@ -166,11 +166,11 @@ model TB_Dinak_Master_22 {
   title       String?
   userName    String?
   mainNumber  String?
-  phoneNumber String?
+  phoneNumber String?  @db.LongText
   uploadDate  String?
   country     String?
   createdAt   DateTime @default(now()) @db.DateTime(0)
-  imageURL    String?
+  imageURL    String?  @db.LongText
   url         String?
   fish        String?
   tag         String?
@@ -187,11 +187,11 @@ model TB_Dinak_Master_23 {
   title       String?
   userName    String?
   mainNumber  String?
-  phoneNumber String?
+  phoneNumber String?  @db.LongText
   uploadDate  String?
   country     String?
   createdAt   DateTime @default(now()) @db.DateTime(0)
-  imageURL    String?
+  imageURL    String?  @db.LongText
   url         String?
   fish        String?
   tag         String?
@@ -206,4 +206,45 @@ model User {
   desc    String
   country String
   fishs   String
+}
+
+model TB_Innak_OnlyBoat {
+  id          Int      @id @default(autoincrement())
+  userId      String?
+  title       String?
+  userName    String?
+  mainNumber  String?
+  phoneNumber String?  @db.LongText
+  country     String?
+  createdAt   DateTime @default(now()) @db.DateTime(0)
+  imageURL    String?  @db.LongText
+  url         String?
+  fish        String?
+  tag         String?
+  desc        String?  @db.LongText
+  openedAt    String?
+  homePage    String?
+  location    String?
+  genre       String?
+  boatName    String?
+}
+
+model Test {
+  id          Int      @id @default(autoincrement())
+  userId      String?
+  title       String?
+  userName    String?
+  mainNumber  String?
+  phoneNumber String?  @db.LongText
+  uploadDate  String?
+  country     String?
+  createdAt   DateTime @default(now()) @db.DateTime(0)
+  imageURL    String?  @db.LongText
+  url         String?
+  fish        String?
+  tag         String?
+  region      String?
+  numb        String?
+  type        String?
+  description String?  @db.LongText
 }

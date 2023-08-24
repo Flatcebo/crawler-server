@@ -27,10 +27,10 @@ export async function POST(req: Request, res: Response) {
     new Array(33).map(i => i);
 
     const detailImg: any = $(".contents img");
-    const detailDesc: any = $(".contents ");
+    const detailDesc: any = $("div:not([id]).contents");
 
     const detailItems = {
-      detailDesc: (detailDesc as any).text().trim() ?? "",
+      detailDesc: (detailDesc as any).html() ?? "",
       detailPhoneNumber:
         (detailDesc as any).text().trim().replace(/\D/g, "|") ?? "",
       detailImg:
@@ -41,9 +41,7 @@ export async function POST(req: Request, res: Response) {
     };
 
     // console.log(detailItems);
-
-    const regex: any =
-      /(?=.)(?:02|0[13-9]{1}[0-9]{1})[^0-9]*[0-9]{3,4}[^0-9]*[0-9]{4}/g;
+    const regex: any = /(?=.)(?:010)[^0-9]*[0-9]{3,4}[^0-9]*[0-9]{4}/g;
     let result: any = regex.exec(detailItems.detailDesc);
     let results: any = [];
     while (result != null) {
@@ -112,7 +110,7 @@ export async function POST(req: Request, res: Response) {
 
   // -----------------------------------------------------------------------------------------------------
 
-  const user = await prisma.tB_Dinak_Master_20.createMany({
+  const user = await prisma.tB_Dinak_Master_23.createMany({
     data: items.map((value: any) => ({
       title: value.listTitle,
       userName: value.listName,

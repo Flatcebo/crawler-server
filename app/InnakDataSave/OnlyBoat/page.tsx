@@ -61,8 +61,9 @@ export default function Page() {
     defaultValues: { uri: "" },
   });
 
-  const [createCrawling, { loading, data, error }] =
-    useMutation(`/api/dinakDataSave`);
+  const [createCrawling, { loading, data, error }] = useMutation(
+    `/api/innakDataSave/onlyBoat`
+  );
 
   // const { data: data1 } = useSWR(`/api/crawler`);
   // const [createCrawling1, { loading: loading1, data: data1, error: error1 }] =
@@ -71,7 +72,7 @@ export default function Page() {
   const onSubmits = async (data: any) => {
     // 1~ 41826 데이터 뽑으면 됨
     let page = 1;
-    const totalPages = 1500; // 총 페이지 수
+    const totalPages = 35; // 총 페이지 수
     const delayInMilliseconds = 3000;
 
     while (true) {
@@ -88,7 +89,6 @@ export default function Page() {
 
       page++;
 
-      // &page=21
       // 1초 지연 시간 주기
       await new Promise((resolve: any) =>
         setTimeout(() => {
@@ -123,12 +123,10 @@ export default function Page() {
     const addrs = data.items.map((value: any) => value.listSubject);
 
     // console.log(addrs);
-
-    // http://jowhang.dinak.co.kr/%EC%A0%90%EC%A3%BC%EC%84%A0%EC%9E%A5%EC%A1%B0%ED%99%A9/list?sYear=2023&tmp=1
     const list: any = [];
     for (const it of addrs) {
       const result = await fetch(
-        `/api/dinakDataSave?addr=${encodeURIComponent(it)}`
+        `/api/innakDataSave/onlyBoat?addr=${encodeURIComponent(it)}`
       )
         .then(res => res.json())
         .then(res => (res as any).detailItems)
@@ -149,28 +147,28 @@ export default function Page() {
 
   //   }
 
-  // function convertAToB(from: any, from2: any, from3: any) {
-  //   if (from == null || from2 == null || from3 == null) {
-  //     // alert("널임 확인 좀");
-  //     return [];
-  //   }
+  function convertAToB(from: any, from2: any, from3: any) {
+    if (from == null || from2 == null || from3 == null) {
+      // alert("널임 확인 좀");
+      return [];
+    }
 
-  // console.log("from =>", from);
-  // console.log("from 2 =>", from2);
-  // console.log("from 3 =>", from3);
-  //   return (from as any).items.map((value: any, i: any) => ({
-  //     uploadDate: value.listDate.replace("", "`"),
-  //     name: value.listName ?? "---이름을 표기할 수 없습니다---",
-  //     url: value.listSubject ?? "",
-  //     listNumber: value.listSubject.replace(
-  //       "https://innak.kr/bbs/board.php?bo_table=",
-  //       ""
-  //     ),
-  //     title: (value.listTitle as any) ?? "",
-  //     userId: value.listUserId,
-  //     phoneNumber: (from2[i]?.results as Array<string>)?.join(", ") ?? "",
-  //   }));
-  // }
+    // console.log("from =>", from);
+    // console.log("from 2 =>", from2);
+    // console.log("from 3 =>", from3);
+    return (from as any).items.map((value: any, i: any) => ({
+      // uploadDate: value.listDate.replace("", "`"),
+      name: value.listName ?? "---이름을 표기할 수 없습니다---",
+      url: value.listSubject ?? "",
+      // listNumber: value.listSubject.replace(
+      //   "https://innak.kr/bbs/board.php?bo_table=",
+      //   ""
+      // ),
+      title: (value.listTitle as any) ?? "",
+      userId: value.listUserId,
+      phoneNumber: (from2[i]?.results as Array<string>)?.join(", ") ?? "",
+    }));
+  }
 
   // console.log(
   //   "asdfas ===>",
@@ -229,13 +227,13 @@ export default function Page() {
           >
             <strong>상세 데이터 조회</strong>
           </button>
-          {/* <ExcelDownload
+          <ExcelDownload
             className="bg-[#ff006f7d] w-[200px] h-[100px]"
             data={convertAToB(data, etc, data)}
             // onClick= {}
             // data={convertBToC(datas)}
             headers={headers}
-          /> */}
+          />
           {/* <CSVLink
             className="bg-[#ffff007d] w-[200px] h-[100px]"
             data={datas}
@@ -257,8 +255,8 @@ export default function Page() {
       <div className="relative">
         <div className="relative flex flex-row">
           {/* 지역 카테고리 */}
-          <div className="bg-[#9f84845a]">
-            {/* {data &&
+          {/* <div className="bg-[#9f84845a]">
+            {data &&
               data.cate.map((cont: any) => {
                 return (
                   <div className="outline">
@@ -274,11 +272,11 @@ export default function Page() {
                     </h2>
                   </div>
                 );
-              })} */}
-          </div>
+              })}
+          </div> */}
           {/* 리스트 */}
-          <div className="bg-[#67677e39]">
-            {/* {data &&
+          {/* <div className="bg-[#67677e39]">
+            {data &&
               data.items.map((cont: any, i: number) => {
                 return (
                   <div className="outline">
@@ -313,19 +311,37 @@ export default function Page() {
                     <h4>{cont.listDate}</h4>
                   </div>
                 );
-              })} */}
-          </div>
+              })}
+          </div> */}
         </div>
         <div className="relative">
-          {/* {etc.map(value => {
+          {etc.map(value => {
             return (
               <div className="overflow-y-scroll border-t-[50px] border-[#0000ff56] ">
                 <div className="">
                   <div className=" m-[10px] ">{(value as any).detailDesc}</div>
+                  {/* <div className=" m-[10px] ">{(value as any).results}</div> */}
+                  {/* <div className=" m-[10px] ">{(value as any).detailImg}</div> */}
+                  {/* <div>
+                    {(value as any).detailImg.map((img: any) => {
+                      return (
+                        <div className="outline outline-[red]">
+                          <Link
+                            href={""}
+                            onClick={() => {
+                              window.open(img);
+                            }}
+                          >
+                            {img}
+                          </Link>
+                        </div>
+                      );
+                    })}
+                  </div> */}
                 </div>
               </div>
             );
-          })} */}
+          })}
         </div>
       </div>
     </div>
